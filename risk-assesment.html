@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Risk IQ | Risk Assessment</title>
+
+    <link rel="stylesheet" href="risk-assessment.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <div class="brand-logo">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="brand-text">
+                <h1>RISK<span>IQ</span></h1>
+                <small>AI RISK INTELLIGENCE</small>
+            </div>
+
+        </div>
+
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <nav class="navigation">
+
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="Loan-applications.html" class="nav-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Loan Applications</span>
+            </a>
+
+            <a href="Loan-applications.html" class="nav-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Borrowers</span>
+            </a>
+
+            <a href="risk-assessment.html" class="nav-item active">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Risk Assessment</span>
+            </a>
+
+            <a href="portfolio.html" class="nav-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Portfolio</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Analytics</span>
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+
+            <div class="system-status">
+                <span class="status-dot"></span>
+                Risk Engine Online
+            </div>
+
+            <div class="admin-profile">
+
+                <div class="avatar">
+                    AD
+                </div>
+
+                <div>
+                    <strong>Admin</strong>
+                    <small>Risk Analyst</small>
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="main">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div>
+                <div class="breadcrumb">
+                    RISK IQ / RISK ASSESSMENT
+                </div>
+
+                <h2>Borrower Risk Assessment</h2>
+            </div>
+
+            <div class="top-right">
+
+                <div class="live-indicator">
+                    <span></span>
+                    LIVE RISK ENGINE
+                </div>
+
+                <div class="avatar">
+                    AD
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- ================= CONTENT ================= -->
+
+        <section class="content">
+
+            <div class="page-heading">
+
+                <div>
+
+                    <div class="eyebrow">
+                        <i class="fa-solid fa-bolt"></i>
+                        RISK INTELLIGENCE
+                    </div>
+
+                    <h1>
+                        Assess Borrower
+                        <strong>Risk.</strong>
+                    </h1>
+
+                    <p>
+                        Enter borrower information and let Risk IQ generate
+                        a transparent risk score and lending recommendation.
+                    </p>
+
+                </div>
+
+                <div class="engine-card">
+
+                    <div class="engine-icon">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+
+                    <div>
+                        <strong>Risk Engine</strong>
+                        <span>Rule-based intelligence</span>
+                    </div>
+
+                    <i class="fa-solid fa-circle-check"></i>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= ASSESSMENT AREA ================= -->
+
+            <div class="assessment-layout">
+
+
+                <!-- ================= FORM ================= -->
+
+                <div class="assessment-form card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <h3>
+                                <i class="fa-solid fa-user-check"></i>
+                                Borrower Profile
+                            </h3>
+
+                            <p>
+                                Information used to calculate Risk IQ.
+                            </p>
+                        </div>
+
+                        <span class="required">
+                            Required fields
+                        </span>
+
+                    </div>
+
+
+                    <form id="riskForm">
+
+
+                        <!-- Borrower -->
+
+                        <div class="form-section">
+
+                            <h4>
+                                <i class="fa-solid fa-user"></i>
+                                Borrower Information
+                            </h4>
+
+                            <div class="form-grid">
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Full Name
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="fullName"
+                                        placeholder="e.g. John Doe"
+                                        required
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Employment Status
+                                    </label>
+
+                                    <select id="employmentStatus" required>
+
+                                        <option value="">
+                                            Select status
+                                        </option>
+
+                                        <option value="employed">
+                                            Employed
+                                        </option>
+
+                                        <option value="self-employed">
+                                            Self-employed
+                                        </option>
+
+                                        <option value="business-owner">
+                                            Business Owner
+                                        </option>
+
+                                        <option value="unemployed">
+                                            Unemployed
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Financial -->
+
+                        <div class="form-section">
+
+                            <h4>
+                                <i class="fa-solid fa-coins"></i>
+                                Financial Behaviour
+                            </h4>
+
+                            <div class="form-grid">
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Monthly Income
+                                    </label>
+
+                                    <div class="money-input">
+                                        <span>P</span>
+
+                                        <input
+                                            type="number"
+                                            id="income"
+                                            min="0"
+                                            placeholder="0"
+                                            required
+                                        >
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Monthly Expenses
+                                    </label>
+
+                                    <div class="money-input">
+                                        <span>P</span>
+
+                                        <input
+                                            type="number"
+                                            id="expenses"
+                                            min="0"
+                                            placeholder="0"
+                                            required
+                                        >
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Existing Debt Payments
+                                    </label>
+
+                                    <div class="money-input">
+                                        <span>P</span>
+
+                                        <input
+                                            type="number"
+                                            id="debt"
+                                            min="0"
+                                            placeholder="0"
+                                            required
+                                        >
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Income Stability
+                                    </label>
+
+                                    <select id="incomeStability" required>
+
+                                        <option value="">
+                                            Select stability
+                                        </option>
+
+                                        <option value="stable">
+                                            Stable
+                                        </option>
+
+                                        <option value="moderate">
+                                            Moderate
+                                        </option>
+
+                                        <option value="unstable">
+                                            Unstable
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Loan history -->
+
+                        <div class="form-section">
+
+                            <h4>
+                                <i class="fa-solid fa-clock-rotate-left"></i>
+                                Previous Loan Behaviour
+                            </h4>
+
+                            <div class="form-grid">
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Previous Loans
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="previousLoans"
+                                        min="0"
+                                        value="0"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Late Payments
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="latePayments"
+                                        min="0"
+                                        value="0"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Previous Defaults
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="defaults"
+                                        min="0"
+                                        value="0"
+                                    >
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Requested Loan
+                                    </label>
+
+                                    <div class="money-input">
+                                        <span>P</span>
+
+                                        <input
+                                            type="number"
+                                            id="loanAmount"
+                                            min="0"
+                                            placeholder="0"
+                                            required
+                                        >
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="assess-button"
+                        >
+
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                            Generate Risk Assessment
+
+                            <i class="fa-solid fa-arrow-right"></i>
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+
+                <!-- ================= RESULT ================= -->
+
+                <div class="result-panel">
+
+                    <div class="result-card card">
+
+                        <div class="result-header">
+
+                            <div>
+
+                                <span class="result-label">
+                                    RISK IQ SCORE
+                                </span>
+
+                                <p>
+                                    Borrower risk intelligence
+                                </p>
+
+                            </div>
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                        </div>
+
+
+                        <div class="score-area">
+
+                            <div class="score-circle">
+
+                                <div>
+                                    <strong id="riskScore">
+                                        --
+                                    </strong>
+
+                                    <span>/100</span>
+                                </div>
+
+                            </div>
+
+                            <div class="risk-status" id="riskStatus">
+                                Awaiting assessment
+                            </div>
+
+                        </div>
+
+
+                        <div class="recommendation" id="recommendation">
+
+                            <i class="fa-solid fa-lightbulb"></i>
+
+                            <div>
+
+                                <strong>
+                                    Assessment Required
+                                </strong>
+
+                                <p>
+                                    Submit borrower information to generate
+                                    a lending recommendation.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Score breakdown -->
+
+                    <div class="card breakdown-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h3>Risk Breakdown</h3>
+                                <p>
+                                    Factors contributing to the score.
+                                </p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-factor">
+
+                            <div class="factor-name">
+                                <span>
+                                    Repayment Behaviour
+                                </span>
+
+                                <strong id="repaymentScore">
+                                    --
+                                </strong>
+                            </div>
+
+                            <div class="progress">
+                                <i id="repaymentBar"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-factor">
+
+                            <div class="factor-name">
+                                <span>
+                                    Debt Behaviour
+                                </span>
+
+                                <strong id="debtScore">
+                                    --
+                                </strong>
+                            </div>
+
+                            <div class="progress">
+                                <i id="debtBar"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-factor">
+
+                            <div class="factor-name">
+                                <span>
+                                    Previous Loan History
+                                </span>
+
+                                <strong id="historyScore">
+                                    --
+                                </strong>
+                            </div>
+
+                            <div class="progress">
+                                <i id="historyBar"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-factor">
+
+                            <div class="factor-name">
+                                <span>
+                                    Affordability
+                                </span>
+
+                                <strong id="affordabilityScore">
+                                    --
+                                </strong>
+                            </div>
+
+                            <div class="progress">
+                                <i id="affordabilityBar"></i>
+                            </div>
+
+                        </div>
+
+
+                        <div class="risk-factor">
+
+                            <div class="factor-name">
+                                <span>
+                                    Income Stability
+                                </span>
+
+                                <strong id="incomeScore">
+                                    --
+                                </strong>
+                            </div>
+
+                            <div class="progress">
+                                <i id="incomeBar"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Reasoning -->
+
+                    <div class="card reasoning-card">
+
+                        <div class="card-header">
+
+                            <div>
+                                <h3>
+                                    <i class="fa-solid fa-brain"></i>
+                                    Risk Reasoning
+                                </h3>
+
+                                <p>
+                                    Why Risk IQ reached this assessment.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div id="reasoning">
+
+                            <div class="empty-reasoning">
+                                <i class="fa-solid fa-chart-simple"></i>
+
+                                <p>
+                                    Complete an assessment to see
+                                    risk reasoning.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script src="risk-assessment.js"></script>
+
+</body>
+</html>
