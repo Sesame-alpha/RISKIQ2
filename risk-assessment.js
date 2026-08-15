@@ -1,709 +1,1006 @@
 /* =========================================================
    RISK IQ
-   BORROWER RISK ENGINE
+   RISK ASSESSMENT ENGINE
    ========================================================= */
 
 
-/* ================= SIDEBAR ================= */
+/* =========================================================
+   DEFAULT RULES
+   These can later be loaded from your Risk Rules page.
+   ========================================================= */
 
-function toggleSidebar() {
+const DEFAULT_RULES = {
 
-    document
-        .querySelector(".sidebar")
-        .classList.toggle("collapsed");
+    affordability: {
+        weight: 25
+    },
 
-    document
-        .querySelector(".main")
-        .classList.toggle("collapsed");
+    debtBehaviour: {
+        weight: 20
+    },
+
+    repaymentBehaviour: {
+        weight: 25
+    },
+
+    incomeStability: {
+        weight: 15
+    },
+
+    employment: {
+        weight: 15
+    }
+
+};
+
+
+/* =========================================================
+   LOAD RULES
+   If the lender has changed rules in the Risk Rules page,
+   those rules will eventually be loaded here.
+   ========================================================= */
+
+function getRules() {
+
+    try {
+
+        const savedRules =
+            localStorage.getItem("riskiq_rules");
+
+        if (savedRules) {
+
+            return {
+                ...DEFAULT_RULES,
+                ...JSON.parse(savedRules)
+            };
+
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Could not load Risk IQ rules:",
+            error
+        );
+
+    }
+
+    return DEFAULT_RULES;
+}
+
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+
+function numberValue(id) {
+
+    const element = document.getElementById(id);
+
+    if (!element) {
+        return 0;
+    }
+
+    return Number(element.value) || 0;
+}
+
+
+function textValue(id) {
+
+    const element = document.getElementById(id);
+
+    if (!element) {
+        return "";
+    }
+
+    return element.value || "";
 
 }
 
 
 /* =========================================================
-   RISK IQ RULES
-
-   Total = 100 points
-
-   1. Repayment Behaviour = 25
-   2. Debt Behaviour = 20
-   3. Previous Loan History = 20
-   4. Affordability = 20
-   5. Income Stability = 15
-
-   TOTAL = 100
+   AFFORDABILITY
    ========================================================= */
 
+function calculateAffordability(data) {
 
-/* ================= MAIN ASSESSMENT ================= */
+    if (data.income <= 0) {
 
-document
-    .getElementById("riskForm")
-    .addEventListener("submit", function(event) {
-
-        event.preventDefault();
-
-        calculateRisk();
-
-    });
-
-
-function calculateRisk() {
-
-
-    /* ================= GET VALUES ================= */
-
-    const income =
-        Number(
-            document.getElementById("income").value
-        );
-
-    const expenses =
-        Number(
-            document.getElementById("expenses").value
-        );
-
-    const debt =
-        Number(
-            document.getElementById("debt").value
-        );
-
-    const previousLoans =
-        Number(
-            document.getElementById("previousLoans").value
-        );
-
-    const latePayments =
-        Number(
-            document.getElementById("latePayments").value
-        );
-
-    const defaults =
-        Number(
-            document.getElementById("defaults").value
-        );
-
-    const loanAmount =
-        Number(
-            document.getElementById("loanAmount").value
-        );
-
-    const incomeStability =
-        document.getElementById(
-            "incomeStability"
-        ).value;
-
-    const employment =
-        document.getElementById(
-            "employmentStatus"
-        ).value;
-
-
-    /* ================= VALIDATION ================= */
-
-    if (
-        income <= 0 ||
-        loanAmount <= 0
-    ) {
-
-        alert(
-            "Please enter a valid income and loan amount."
-        );
-
-        return;
+        return {
+            score: 0,
+            message: "No income information supplied.",
+            type: "danger"
+        };
 
     }
 
 
-    /* =====================================================
-       1. REPAYMENT BEHAVIOUR
-       MAXIMUM = 25
-       ===================================================== */
-
-    let repaymentScore = 25;
-
-    const repaymentReasons = [];
+    const availableIncome =
+        data.income -
+        data.expenses -
+        data.debt;
 
 
-    if (latePayments === 0) {
+    const affordabilityRatio =
+        availableIncome / data.income;
 
-        repaymentScore = 25;
 
-        repaymentReasons.push(
-            "No late payments were recorded, indicating strong repayment behaviour."
-        );
+    let score;
 
-    }
 
-    else if (latePayments <= 2) {
+    if (affordabilityRatio >= 0.50) {
 
-        repaymentScore = 18;
+        score = 100;
 
-        repaymentReasons.push(
-            "The borrower has a small number of late payments."
-        );
+    } else if (affordabilityRatio >= 0.35) {
 
-    }
+        score = 85;
 
-    else if (latePayments <= 5) {
+    } else if (affordabilityRatio >= 0.20) {
 
-        repaymentScore = 10;
+        score = 70;
 
-        repaymentReasons.push(
-            "Several late payments increase repayment risk."
-        );
+    } else if (affordabilityRatio >= 0.10) {
 
-    }
+        score = 50;
 
-    else {
+    } else {
 
-        repaymentScore = 4;
-
-        repaymentReasons.push(
-            "Frequent late payments indicate elevated repayment risk."
-        );
+        score = 20;
 
     }
 
 
-    /* =====================================================
-       2. DEBT BEHAVIOUR
-       MAXIMUM = 20
-       ===================================================== */
+    let type = "good";
 
-    let debtScore = 20;
+    if (score < 75) {
+        type = "warning";
+    }
 
-    const debtReasons = [];
+    if (score < 50) {
+        type = "danger";
+    }
+
+
+    return {
+        score,
+        message:
+            `Disposable income is P${Math.max(
+                availableIncome,
+                0
+            ).toFixed(2)} per month.`,
+        type
+    };
+
+}
+
+
+/* =========================================================
+   DEBT BEHAVIOUR
+   ========================================================= */
+
+function calculateDebtBehaviour(data) {
+
+    if (data.income <= 0) {
+
+        return {
+            score: 0,
+            message: "Debt-to-income ratio cannot be calculated.",
+            type: "danger"
+        };
+
+    }
 
 
     const debtRatio =
-        debt / income;
+        data.debt / data.income;
+
+
+    let score;
 
 
     if (debtRatio <= 0.20) {
 
-        debtScore = 20;
+        score = 100;
 
-        debtReasons.push(
-            "Existing debt obligations are relatively low compared with income."
-        );
+    } else if (debtRatio <= 0.35) {
 
-    }
+        score = 85;
 
-    else if (debtRatio <= 0.35) {
+    } else if (debtRatio <= 0.45) {
 
-        debtScore = 15;
+        score = 70;
 
-        debtReasons.push(
-            "Debt obligations are moderate relative to income."
-        );
+    } else if (debtRatio <= 0.60) {
 
-    }
+        score = 50;
 
-    else if (debtRatio <= 0.50) {
+    } else {
 
-        debtScore = 9;
-
-        debtReasons.push(
-            "Debt obligations are becoming significant relative to income."
-        );
-
-    }
-
-    else {
-
-        debtScore = 3;
-
-        debtReasons.push(
-            "High existing debt obligations increase financial pressure."
-        );
+        score = 20;
 
     }
 
 
-    /* =====================================================
-       3. PREVIOUS LOAN HISTORY
-       MAXIMUM = 20
-       ===================================================== */
+    let type = "good";
 
-    let historyScore = 20;
-
-    const historyReasons = [];
-
-
-    if (defaults > 0) {
-
-        historyScore -=
-            Math.min(defaults * 7, 17);
-
-        historyReasons.push(
-            `${defaults} previous default(s) negatively affect the borrower's history.`
-        );
-
+    if (score < 75) {
+        type = "warning";
     }
 
-    else if (previousLoans > 0) {
-
-        historyScore = 18;
-
-        historyReasons.push(
-            "The borrower has previous loan experience without recorded defaults."
-        );
-
-    }
-
-    else {
-
-        historyScore = 15;
-
-        historyReasons.push(
-            "The borrower has limited or no previous loan history."
-        );
-
+    if (score < 50) {
+        type = "danger";
     }
 
 
-    if (historyScore < 0) {
-        historyScore = 0;
-    }
-
-
-    /* =====================================================
-       4. AFFORDABILITY
-       MAXIMUM = 20
-       ===================================================== */
-
-    let affordabilityScore = 20;
-
-    const affordabilityReasons = [];
-
-
-    const disposableIncome =
-        income - expenses - debt;
-
-
-    const estimatedLoanBurden =
-        loanAmount / income;
-
-
-    if (
-        disposableIncome > 0 &&
-        estimatedLoanBurden <= 1
-    ) {
-
-        affordabilityScore = 20;
-
-        affordabilityReasons.push(
-            "The borrower's income appears sufficient to support the requested loan."
-        );
-
-    }
-
-    else if (
-        disposableIncome > 0 &&
-        estimatedLoanBurden <= 2
-    ) {
-
-        affordabilityScore = 15;
-
-        affordabilityReasons.push(
-            "The loan appears potentially affordable but should be monitored."
-        );
-
-    }
-
-    else if (disposableIncome > 0) {
-
-        affordabilityScore = 9;
-
-        affordabilityReasons.push(
-            "The requested loan is relatively large compared with the borrower's income."
-        );
-
-    }
-
-    else {
-
-        affordabilityScore = 3;
-
-        affordabilityReasons.push(
-            "Current expenses and debt obligations exceed available income."
-        );
-
-    }
-
-
-    /* =====================================================
-       5. INCOME STABILITY
-       MAXIMUM = 15
-       ===================================================== */
-
-    let incomeScore = 0;
-
-    const incomeReasons = [];
-
-
-    if (incomeStability === "stable") {
-
-        incomeScore = 15;
-
-        incomeReasons.push(
-            "Stable income provides stronger repayment capacity."
-        );
-
-    }
-
-    else if (incomeStability === "moderate") {
-
-        incomeScore = 10;
-
-        incomeReasons.push(
-            "Moderate income stability introduces some repayment uncertainty."
-        );
-
-    }
-
-    else if (incomeStability === "unstable") {
-
-        incomeScore = 5;
-
-        incomeReasons.push(
-            "Unstable income increases repayment uncertainty."
-        );
-
-    }
-
-    else {
-
-        incomeScore = 5;
-
-        incomeReasons.push(
-            "Income stability information is limited."
-        );
-
-    }
-
-
-    /* =====================================================
-       FINAL SCORE
-       ===================================================== */
-
-    let totalScore =
-        repaymentScore +
-        debtScore +
-        historyScore +
-        affordabilityScore +
-        incomeScore;
-
-
-    /* Keep score between 0 and 100 */
-
-    totalScore =
-        Math.max(
-            0,
-            Math.min(
-                100,
-                Math.round(totalScore)
-            )
-        );
-
-
-    /* =====================================================
-       RISK CATEGORY
-       ===================================================== */
-
-    let risk;
-    let recommendation;
-
-
-    if (totalScore >= 75) {
-
-        risk = "LOW RISK";
-
-        recommendation =
-            "Recommended for consideration, subject to lender policy and verification.";
-
-    }
-
-    else if (totalScore >= 50) {
-
-        risk = "MEDIUM RISK";
-
-        recommendation =
-            "Consider with additional review, verification or appropriate lending controls.";
-
-    }
-
-    else {
-
-        risk = "HIGH RISK";
-
-        recommendation =
-            "Further review is recommended before making a lending decision.";
-
-    }
-
-
-    /* =====================================================
-       UPDATE SCORE
-       ===================================================== */
-
-    updateScore(
-        totalScore,
-        risk,
-        recommendation
-    );
-
-
-    /* =====================================================
-       UPDATE BREAKDOWN
-       ===================================================== */
-
-    updateFactor(
-        "repaymentScore",
-        "repaymentBar",
-        repaymentScore,
-        25
-    );
-
-
-    updateFactor(
-        "debtScore",
-        "debtBar",
-        debtScore,
-        20
-    );
-
-
-    updateFactor(
-        "historyScore",
-        "historyBar",
-        historyScore,
-        20
-    );
-
-
-    updateFactor(
-        "affordabilityScore",
-        "affordabilityBar",
-        affordabilityScore,
-        20
-    );
-
-
-    updateFactor(
-        "incomeScore",
-        "incomeBar",
-        incomeScore,
-        15
-    );
-
-
-    /* =====================================================
-       REASONING
-       ===================================================== */
-
-    const allReasons = [
-
-        ...repaymentReasons,
-        ...debtReasons,
-        ...historyReasons,
-        ...affordabilityReasons,
-        ...incomeReasons
-
-    ];
-
-
-    displayReasoning(
-        allReasons
-    );
-
+    return {
+        score,
+        message:
+            `Debt-to-income ratio is ${(debtRatio * 100).toFixed(1)}%.`,
+        type
+    };
 
 }
 
 
 /* =========================================================
-   SCORE DISPLAY
+   REPAYMENT BEHAVIOUR
    ========================================================= */
 
-function updateScore(
-    score,
-    risk,
-    recommendation
-) {
+function calculateRepaymentBehaviour(data) {
+
+    let score = 100;
 
 
-    document
-        .getElementById("riskScore")
-        .textContent = score;
+    /* Late payments */
+
+    score -= data.latePayments * 7;
 
 
-    const status =
-        document.getElementById(
-            "riskStatus"
+    /* Defaults are more serious */
+
+    score -= data.previousDefaults * 20;
+
+
+    /* Keep score within 0-100 */
+
+    score = Math.max(
+        0,
+        Math.min(100, score)
+    );
+
+
+    let type = "good";
+
+    if (score < 75) {
+        type = "warning";
+    }
+
+    if (score < 50) {
+        type = "danger";
+    }
+
+
+    let message;
+
+
+    if (data.previousDefaults > 0) {
+
+        message =
+            `${data.previousDefaults} previous default(s) recorded.`;
+
+    } else if (data.latePayments > 0) {
+
+        message =
+            `${data.latePayments} late payment(s) recorded.`;
+
+    } else {
+
+        message =
+            "No late payments or defaults reported.";
+
+    }
+
+
+    return {
+        score,
+        message,
+        type
+    };
+
+}
+
+
+/* =========================================================
+   INCOME STABILITY
+   ========================================================= */
+
+function calculateIncomeStability(data) {
+
+    let score = 50;
+
+
+    if (data.incomeStability === "stable") {
+
+        score = 100;
+
+    } else if (data.incomeStability === "moderate") {
+
+        score = 70;
+
+    } else if (data.incomeStability === "unstable") {
+
+        score = 30;
+
+    }
+
+
+    let type = "warning";
+
+    if (score >= 75) {
+        type = "good";
+    }
+
+    if (score < 50) {
+        type = "danger";
+    }
+
+
+    return {
+        score,
+        message:
+            data.incomeStability
+                ? `Income stability classified as ${data.incomeStability}.`
+                : "Income stability was not provided.",
+        type
+    };
+
+}
+
+
+/* =========================================================
+   EMPLOYMENT
+   ========================================================= */
+
+function calculateEmployment(data) {
+
+    let score = 50;
+
+
+    if (data.employmentStatus === "employed") {
+
+        score = 100;
+
+    } else if (
+        data.employmentStatus === "self-employed"
+    ) {
+
+        score = 85;
+
+    } else if (
+        data.employmentStatus === "business-owner"
+    ) {
+
+        score = 85;
+
+    } else if (
+        data.employmentStatus === "unemployed"
+    ) {
+
+        score = 20;
+
+    }
+
+
+    if (
+        data.yearsEmployed >= 5 &&
+        score > 0
+    ) {
+
+        score = Math.min(
+            100,
+            score + 5
+        );
+
+    }
+
+
+    let type = "warning";
+
+    if (score >= 75) {
+        type = "good";
+    }
+
+    if (score < 50) {
+        type = "danger";
+    }
+
+
+    return {
+        score,
+        message:
+            data.employmentStatus
+                ? `Employment status: ${data.employmentStatus}.`
+                : "Employment information was not provided.",
+        type
+    };
+
+}
+
+
+/* =========================================================
+   FINAL RISK SCORE
+   ========================================================= */
+
+function calculateRisk(data) {
+
+    const rules = getRules();
+
+
+    const affordability =
+        calculateAffordability(data);
+
+
+    const debtBehaviour =
+        calculateDebtBehaviour(data);
+
+
+    const repaymentBehaviour =
+        calculateRepaymentBehaviour(data);
+
+
+    const incomeStability =
+        calculateIncomeStability(data);
+
+
+    const employment =
+        calculateEmployment(data);
+
+
+    const factors = [
+
+        {
+            name: "Affordability",
+            ...affordability,
+            weight: rules.affordability.weight
+        },
+
+        {
+            name: "Debt Behaviour",
+            ...debtBehaviour,
+            weight: rules.debtBehaviour.weight
+        },
+
+        {
+            name: "Repayment Behaviour",
+            ...repaymentBehaviour,
+            weight: rules.repaymentBehaviour.weight
+        },
+
+        {
+            name: "Income Stability",
+            ...incomeStability,
+            weight: rules.incomeStability.weight
+        },
+
+        {
+            name: "Employment",
+            ...employment,
+            weight: rules.employment.weight
+        }
+
+    ];
+
+
+    const totalWeight =
+        factors.reduce(
+            (sum, factor) =>
+                sum + Number(factor.weight),
+            0
         );
 
 
-    status.textContent = risk;
+    let weightedScore =
+        factors.reduce(
+            (sum, factor) => {
 
+                return sum +
+                    (
+                        factor.score *
+                        Number(factor.weight)
+                    );
 
-    const recommendationBox =
-        document.getElementById(
-            "recommendation"
+            },
+            0
         );
 
 
-    recommendationBox.innerHTML = `
-
-        <i class="fa-solid fa-lightbulb"></i>
-
-        <div>
-
-            <strong>
-                ${risk}
-            </strong>
-
-            <p>
-                ${recommendation}
-            </p>
-
-        </div>
-
-    `;
+    weightedScore =
+        weightedScore / totalWeight;
 
 
-    /* Score circle */
-
-    const circle =
-        document.querySelector(
-            ".score-circle"
+    const score =
+        Math.round(
+            Math.max(
+                0,
+                Math.min(
+                    100,
+                    weightedScore
+                )
+            )
         );
+
+
+    let risk;
+
+
+    if (score >= 75) {
+
+        risk = "LOW RISK";
+
+    } else if (score >= 50) {
+
+        risk = "MEDIUM RISK";
+
+    } else {
+
+        risk = "HIGH RISK";
+
+    }
+
+
+    return {
+        score,
+        risk,
+        factors
+    };
+
+}
+
+
+/* =========================================================
+   DECISION
+   ========================================================= */
+
+function getDecision(score) {
+
+    if (score >= 75) {
+
+        return "APPROVE";
+
+    }
+
+    if (score >= 50) {
+
+        return "REVIEW";
+
+    }
+
+    return "DECLINE";
+
+}
+
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+function getDescription(score) {
+
+    if (score >= 75) {
+
+        return "Borrower demonstrates relatively strong repayment capacity and lower observed risk.";
+
+    }
+
+    if (score >= 50) {
+
+        return "Borrower presents moderate risk and should receive additional review before a final decision.";
+
+    }
+
+    return "Borrower presents elevated risk based on the information supplied.";
+
+}
+
+
+/* =========================================================
+   UPDATE SCORE RING
+   ========================================================= */
+
+function updateScoreRing(score) {
+
+    const ring =
+        document.getElementById("scoreRing");
+
+
+    if (!ring) {
+        return;
+    }
 
 
     const degrees =
         (score / 100) * 360;
 
 
-    circle.style.background = `
-        conic-gradient(
-            var(--gold) 0deg,
-            var(--burgundy) ${degrees}deg,
-            #eee ${degrees}deg
-        )
-    `;
-
-
-    /* Status styling */
-
-    if (score >= 75) {
-
-        status.style.background =
-            "#edf7f1";
-
-        status.style.color =
-            "var(--green)";
-
-    }
-
-    else if (score >= 50) {
-
-        status.style.background =
-            "#faf5dc";
-
-        status.style.color =
-            "#9a7a00";
-
-    }
-
-    else {
-
-        status.style.background =
-            "#faeeee";
-
-        status.style.color =
-            "var(--red)";
-
-    }
+    ring.style.background =
+        `conic-gradient(
+            #D4AF37 0deg ${degrees}deg,
+            #EEE9E9 ${degrees}deg 360deg
+        )`;
 
 }
 
 
 /* =========================================================
-   FACTOR DISPLAY
+   DISPLAY FACTORS
    ========================================================= */
 
-function updateFactor(
-    scoreId,
-    barId,
-    score,
-    maximum
-) {
-
-
-    const percentage =
-        Math.round(
-            (score / maximum) * 100
-        );
-
-
-    document
-        .getElementById(scoreId)
-        .textContent =
-        `${score}/${maximum}`;
-
-
-    document
-        .getElementById(barId)
-        .style.width =
-        `${percentage}%`;
-
-}
-
-
-/* =========================================================
-   RISK REASONING
-   ========================================================= */
-
-function displayReasoning(
-    reasons
-) {
-
+function displayFactors(factors) {
 
     const container =
-        document.getElementById(
-            "reasoning"
-        );
+        document.getElementById("riskFactors");
+
+
+    const count =
+        document.getElementById("factorCount");
+
+
+    if (!container) {
+        return;
+    }
 
 
     container.innerHTML = "";
 
 
-    reasons.forEach(
-        function(reason) {
+    factors.forEach(factor => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "risk-factor";
 
 
-            const item =
-                document.createElement(
-                    "div"
+        item.innerHTML = `
+
+            <span class="factor-indicator ${factor.type}">
+            </span>
+
+            <div>
+
+                <strong>
+                    ${factor.name}
+                </strong>
+
+                <small>
+                    ${factor.message}
+                </small>
+
+            </div>
+
+            <strong>
+                ${Math.round(factor.score)}
+            </strong>
+
+        `;
+
+
+        container.appendChild(item);
+
+    });
+
+
+    if (count) {
+
+        count.textContent =
+            `${factors.length} factors`;
+
+    }
+
+}
+
+
+/* =========================================================
+   GENERATE REASONING
+   ========================================================= */
+
+function generateReasoning(result) {
+
+    const positive =
+        result.factors.filter(
+            factor => factor.score >= 75
+        );
+
+
+    const negative =
+        result.factors.filter(
+            factor => factor.score < 50
+        );
+
+
+    let reasoning =
+        `Risk IQ generated a score of ${result.score}/100. `;
+
+
+    if (positive.length > 0) {
+
+        reasoning +=
+            `Positive indicators include ${positive
+                .map(f => f.name.toLowerCase())
+                .join(", ")}. `;
+
+    }
+
+
+    if (negative.length > 0) {
+
+        reasoning +=
+            `The main risk concerns are ${negative
+                .map(f => f.name.toLowerCase())
+                .join(", ")}. `;
+
+    }
+
+
+    if (
+        positive.length === 0 &&
+        negative.length === 0
+    ) {
+
+        reasoning +=
+            "The borrower presents a mixed risk profile requiring further review.";
+
+    }
+
+
+    return reasoning;
+
+}
+
+
+/* =========================================================
+   DISPLAY RESULT
+   ========================================================= */
+
+function displayResult(result) {
+
+    const score =
+        document.getElementById("riskScore");
+
+    const level =
+        document.getElementById("riskLevel");
+
+    const description =
+        document.getElementById("riskDescription");
+
+    const decision =
+        document.getElementById("loanDecision");
+
+    const reasoning =
+        document.getElementById("riskReasoning");
+
+
+    if (score) {
+        score.textContent =
+            result.score;
+    }
+
+
+    if (level) {
+
+        level.textContent =
+            result.risk;
+
+    }
+
+
+    if (description) {
+
+        description.textContent =
+            getDescription(result.score);
+
+    }
+
+
+    if (decision) {
+
+        decision.textContent =
+            getDecision(result.score);
+
+    }
+
+
+    if (reasoning) {
+
+        reasoning.textContent =
+            generateReasoning(result);
+
+    }
+
+
+    updateScoreRing(result.score);
+
+    displayFactors(result.factors);
+
+
+    /* Risk level styling */
+
+    if (level) {
+
+        level.classList.remove(
+            "low-risk",
+            "medium-risk",
+            "high-risk"
+        );
+
+
+        if (result.score >= 75) {
+
+            level.classList.add(
+                "low-risk"
+            );
+
+        } else if (result.score >= 50) {
+
+            level.classList.add(
+                "medium-risk"
+            );
+
+        } else {
+
+            level.classList.add(
+                "high-risk"
+            );
+
+        }
+
+    }
+
+}
+
+
+/* =========================================================
+   COLLECT FORM DATA
+   ========================================================= */
+
+function collectData() {
+
+    return {
+
+        fullName:
+            textValue("fullName"),
+
+        omang:
+            textValue("omang"),
+
+        employmentStatus:
+            textValue("employmentStatus"),
+
+        yearsEmployed:
+            numberValue("yearsEmployed"),
+
+        income:
+            numberValue("monthlyIncome"),
+
+        expenses:
+            numberValue("monthlyExpenses"),
+
+        debt:
+            numberValue("monthlyDebt"),
+
+        incomeStability:
+            textValue("incomeStability"),
+
+        previousLoans:
+            numberValue("previousLoans"),
+
+        latePayments:
+            numberValue("latePayments"),
+
+        previousDefaults:
+            numberValue("previousDefaults"),
+
+        loanAmount:
+            numberValue("loanAmount")
+
+    };
+
+}
+
+
+/* =========================================================
+   FORM SUBMISSION
+   ========================================================= */
+
+const form =
+    document.getElementById(
+        "riskAssessmentForm"
+    );
+
+
+if (form) {
+
+    form.addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const data =
+                collectData();
+
+
+            if (data.income <= 0) {
+
+                alert(
+                    "Please enter the borrower's monthly income."
+                );
+
+                return;
+
+            }
+
+
+            if (data.loanAmount <= 0) {
+
+                alert(
+                    "Please enter the requested loan amount."
+                );
+
+                return;
+
+            }
+
+
+            const result =
+                calculateRisk(data);
+
+
+            displayResult(result);
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   SIDEBAR
+   ========================================================= */
+
+const sidebarToggle =
+    document.getElementById(
+        "sidebarToggle"
+    );
+
+
+if (sidebarToggle) {
+
+    sidebarToggle.addEventListener(
+        "click",
+        function() {
+
+            const sidebar =
+                document.getElementById(
+                    "sidebar"
+                );
+
+            const main =
+                document.getElementById(
+                    "main"
                 );
 
 
-            item.className =
-                "reasoning-item";
+            sidebar.classList.toggle(
+                "collapsed"
+            );
 
 
-            item.innerHTML = `
-
-                <i class="fa-solid fa-circle-check"></i>
-
-                <p>
-                    ${reason}
-                </p>
-
-            `;
-
-
-            container.appendChild(
-                item
+            main.classList.toggle(
+                "collapsed"
             );
 
         }
