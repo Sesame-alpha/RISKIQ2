@@ -19,8 +19,7 @@
 
 <div class="app">
 
-    <!-- ================= SIDEBAR ================= -->
-
+    <!-- SIDEBAR -->
     <aside class="sidebar">
 
         <div class="brand">
@@ -36,12 +35,14 @@
 
         </div>
 
-        <button class="sidebar-toggle" id="sidebarToggle">
+        <button
+            type="button"
+            class="sidebar-toggle"
+            id="sidebarToggle"
+        >
             <i class="fa-solid fa-chevron-left"></i>
         </button>
 
-
-        <!-- NAVIGATION -->
 
         <nav class="navigation">
 
@@ -50,7 +51,7 @@
                 <span>Dashboard</span>
             </a>
 
-            <a href="loan-applications.html" class="nav-item">
+            <a href="Loan-applications.html" class="nav-item">
                 <i class="fa-solid fa-file-lines"></i>
                 <span>Loan Applications</span>
             </a>
@@ -83,8 +84,6 @@
         </nav>
 
 
-        <!-- SIDEBAR BOTTOM -->
-
         <div class="sidebar-bottom">
 
             <div class="admin-profile">
@@ -105,18 +104,17 @@
     </aside>
 
 
-    <!-- ================= MAIN ================= -->
-
+    <!-- MAIN -->
     <main class="main">
 
-        <!-- ================= TOPBAR ================= -->
 
+        <!-- TOPBAR -->
         <header class="topbar">
 
             <div class="page-title">
 
                 <div class="breadcrumb">
-                    RISK IQ / RISK ASSESSMENT
+                    Risk IQ / Risk Assessment
                 </div>
 
                 <h2>Borrower Risk Assessment</h2>
@@ -126,11 +124,20 @@
 
             <div class="top-actions">
 
-                <button class="icon-button" title="Search">
+                <button
+                    type="button"
+                    class="icon-button"
+                    title="Search"
+                >
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
 
-                <button class="icon-button notification" title="Notifications">
+
+                <button
+                    type="button"
+                    class="icon-button notification"
+                    title="Notifications"
+                >
                     <i class="fa-solid fa-bell"></i>
                     <span></span>
                 </button>
@@ -154,13 +161,12 @@
         </header>
 
 
-        <!-- ================= CONTENT ================= -->
 
+        <!-- CONTENT -->
         <section class="content">
 
 
-            <!-- PAGE HEADER -->
-
+            <!-- HEADER -->
             <div class="page-header">
 
                 <div>
@@ -174,9 +180,8 @@
                     </h1>
 
                     <p class="page-description">
-                        Evaluate borrower affordability, repayment behaviour,
-                        debt exposure and income stability to generate a
-                        transparent risk score.
+                        Analyse borrower affordability, debt behaviour,
+                        repayment history and income stability.
                     </p>
 
                 </div>
@@ -188,7 +193,7 @@
 
                     <div>
                         <strong>AI Risk Engine</strong>
-                        <span>Active</span>
+                        <span>ACTIVE</span>
                     </div>
 
                 </div>
@@ -196,13 +201,12 @@
             </div>
 
 
-            <!-- ================= ASSESSMENT CARD ================= -->
 
+            <!-- MAIN GRID -->
             <div class="assessment-layout">
 
 
-                <!-- LEFT: FORM -->
-
+                <!-- FORM CARD -->
                 <div class="assessment-card">
 
                     <div class="card-header">
@@ -213,19 +217,20 @@
 
                         <div>
                             <h3>Borrower Information</h3>
+
                             <p>
-                                Enter the information required for risk analysis.
+                                Enter information to generate a risk score.
                             </p>
                         </div>
 
                     </div>
 
 
+
                     <form id="riskAssessmentForm">
 
 
-                        <!-- BORROWER -->
-
+                        <!-- SECTION 1 -->
                         <div class="form-section">
 
                             <div class="form-section-title">
@@ -242,6 +247,7 @@
 
                             <div class="form-grid">
 
+
                                 <div class="form-group">
 
                                     <label for="fullName">
@@ -253,10 +259,10 @@
                                         id="fullName"
                                         name="fullName"
                                         placeholder="Enter full name"
-                                        required
                                     >
 
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -273,6 +279,7 @@
                                     >
 
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -311,6 +318,7 @@
                                 </div>
 
 
+
                                 <div class="form-group">
 
                                     <label for="yearsEmployed">
@@ -332,8 +340,8 @@
                         </div>
 
 
-                        <!-- FINANCIAL -->
 
+                        <!-- SECTION 2 -->
                         <div class="form-section">
 
                             <div class="form-section-title">
@@ -342,13 +350,14 @@
 
                                 <div>
                                     <h4>Financial Behaviour</h4>
-                                    <p>Ability to manage existing obligations</p>
+                                    <p>Income, expenses and debt obligations</p>
                                 </div>
 
                             </div>
 
 
                             <div class="form-grid">
+
 
                                 <div class="form-group">
 
@@ -366,12 +375,12 @@
                                             name="monthlyIncome"
                                             min="0"
                                             placeholder="0.00"
-                                            required
                                         >
 
                                     </div>
 
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -390,12 +399,12 @@
                                             name="monthlyExpenses"
                                             min="0"
                                             placeholder="0.00"
-                                            required
                                         >
 
                                     </div>
 
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -414,12 +423,12 @@
                                             name="monthlyDebt"
                                             min="0"
                                             placeholder="0.00"
-                                            required
                                         >
 
                                     </div>
 
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -458,8 +467,8 @@
                         </div>
 
 
-                        <!-- REPAYMENT -->
 
+                        <!-- SECTION 3 -->
                         <div class="form-section">
 
                             <div class="form-section-title">
@@ -468,13 +477,14 @@
 
                                 <div>
                                     <h4>Repayment Behaviour</h4>
-                                    <p>Previous credit and repayment history</p>
+                                    <p>Previous loan and repayment history</p>
                                 </div>
 
                             </div>
 
 
                             <div class="form-grid">
+
 
                                 <div class="form-group">
 
@@ -491,6 +501,7 @@
                                     >
 
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -510,6 +521,7 @@
                                 </div>
 
 
+
                                 <div class="form-group">
 
                                     <label for="previousDefaults">
@@ -525,6 +537,7 @@
                                     >
 
                                 </div>
+
 
 
                                 <div class="form-group">
@@ -543,7 +556,6 @@
                                             name="loanAmount"
                                             min="0"
                                             placeholder="0.00"
-                                            required
                                         >
 
                                     </div>
@@ -555,8 +567,8 @@
                         </div>
 
 
-                        <!-- ACTION -->
 
+                        <!-- ACTION -->
                         <div class="form-actions">
 
                             <div class="security-note">
@@ -564,8 +576,8 @@
                                 <i class="fa-solid fa-lock"></i>
 
                                 <span>
-                                    Borrower information is processed securely
-                                    and used only for risk assessment.
+                                    Information is processed securely
+                                    for risk assessment.
                                 </span>
 
                             </div>
@@ -589,8 +601,8 @@
                 </div>
 
 
-                <!-- RIGHT: RISK RESULT -->
 
+                <!-- RESULT CARD -->
                 <div class="risk-result-card">
 
 
@@ -602,7 +614,9 @@
                                 RISK IQ SCORE
                             </p>
 
-                            <h3>AI Risk Result</h3>
+                            <h3>
+                                AI Risk Result
+                            </h3>
 
                         </div>
 
@@ -611,8 +625,8 @@
                     </div>
 
 
-                    <!-- SCORE -->
 
+                    <!-- SCORE -->
                     <div class="score-container">
 
                         <div class="score-circle">
@@ -629,21 +643,24 @@
 
                         </div>
 
+
                         <h4 id="riskLevel">
                             Awaiting Assessment
                         </h4>
 
+
                         <p id="riskDescription">
                             Submit borrower information to generate
-                            an AI-powered risk assessment.
+                            the risk score.
                         </p>
 
                     </div>
 
 
-                    <!-- RISK SCALE -->
 
+                    <!-- SCALE -->
                     <div class="risk-scale">
+
 
                         <div class="scale-item">
 
@@ -651,7 +668,7 @@
 
                             <div>
                                 <strong>75–100</strong>
-                                <small>Low Risk</small>
+                                <small>LOW RISK</small>
                             </div>
 
                         </div>
@@ -663,7 +680,7 @@
 
                             <div>
                                 <strong>50–74</strong>
-                                <small>Medium Risk</small>
+                                <small>MEDIUM RISK</small>
                             </div>
 
                         </div>
@@ -675,7 +692,7 @@
 
                             <div>
                                 <strong>0–49</strong>
-                                <small>High Risk</small>
+                                <small>HIGH RISK</small>
                             </div>
 
                         </div>
@@ -683,13 +700,14 @@
                     </div>
 
 
-                    <!-- FACTORS -->
 
+                    <!-- FACTORS -->
                     <div class="risk-factors">
 
                         <h4>
-                            Risk Factors
+                            Key Risk Factors
                         </h4>
+
 
                         <div id="riskFactors">
 
@@ -698,7 +716,7 @@
                                 <i class="fa-solid fa-circle-info"></i>
 
                                 <span>
-                                    Risk factors will appear after assessment.
+                                    Factors will appear after assessment.
                                 </span>
 
                             </div>
@@ -708,13 +726,16 @@
                     </div>
 
 
-                    <!-- DECISION -->
 
+                    <!-- DECISION -->
                     <div class="decision-box">
 
                         <div class="decision-icon">
+
                             <i class="fa-solid fa-scale-balanced"></i>
+
                         </div>
+
 
                         <div>
 
@@ -730,19 +751,21 @@
 
                     </div>
 
-
                 </div>
 
             </div>
 
 
-            <!-- ================= EXPLANATION ================= -->
 
+            <!-- EXPLANATION -->
             <div class="explanation-card">
 
                 <div class="explanation-icon">
+
                     <i class="fa-solid fa-lightbulb"></i>
+
                 </div>
+
 
                 <div>
 
@@ -756,7 +779,7 @@
 
                     <p id="riskReasoning">
 
-                        Risk IQ analyses repayment behaviour,
+                        Risk IQ evaluates repayment behaviour,
                         debt exposure, affordability, previous loan
                         history and income stability to produce a
                         risk score out of 100.
@@ -767,14 +790,13 @@
 
             </div>
 
+
         </section>
 
     </main>
 
 </div>
 
-
-<!-- ================= JAVASCRIPT ================= -->
 
 <script type="module" src="risk-assessment.js"></script>
 
