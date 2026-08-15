@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>RISKIQ | Risk Rules</title>
+
+    <link rel="stylesheet" href="risk-rules.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    >
+</head>
+
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <img src="logo.png" alt="RISKIQ">
+
+            <div class="brand-text">
+                <h1>RISK<span>IQ</span></h1>
+                <small>AI RISK INTELLIGENCE</small>
+            </div>
+
+        </div>
+
+        <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+
+        <nav class="navigation">
+
+            <a href="index.html" class="nav-item">
+                <i class="fa-solid fa-chart-line"></i>
+                <span>Dashboard</span>
+            </a>
+
+            <a href="Loan-applications.html" class="nav-item">
+                <i class="fa-solid fa-file-lines"></i>
+                <span>Loan Applications</span>
+            </a>
+
+            <a href="Loan-applications.html" class="nav-item">
+                <i class="fa-solid fa-users"></i>
+                <span>Borrowers</span>
+            </a>
+
+            <a href="risk-assessment.html" class="nav-item">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Risk Assessment</span>
+            </a>
+
+            <a href="portfolio.html" class="nav-item">
+                <i class="fa-solid fa-wallet"></i>
+                <span>Portfolio</span>
+            </a>
+
+            <a href="analytics.html" class="nav-item">
+                <i class="fa-solid fa-chart-column"></i>
+                <span>Analytics</span>
+            </a>
+
+            <a href="risk-rules.html" class="nav-item active">
+                <i class="fa-solid fa-sliders"></i>
+                <span>Risk Rules</span>
+            </a>
+
+        </nav>
+
+
+        <div class="sidebar-bottom">
+
+            <div class="admin-profile">
+
+                <div class="avatar">
+                    AD
+                </div>
+
+                <div>
+                    <strong>Admin</strong>
+                    <small>Micro Lending</small>
+                </div>
+
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+
+    <main class="main">
+
+        <!-- TOPBAR -->
+
+        <header class="topbar">
+
+            <div class="page-title">
+
+                <div class="breadcrumb">
+                    RISKIQ / Risk Configuration
+                </div>
+
+                <h2>Risk Rules</h2>
+
+            </div>
+
+
+            <div class="top-actions">
+
+                <button class="icon-button">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+
+                <div class="top-profile">
+
+                    <div class="avatar">
+                        AD
+                    </div>
+
+                    <div>
+                        <strong>Admin</strong>
+                        <small>Micro Lending</small>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+        <!-- CONTENT -->
+
+        <section class="content">
+
+
+            <!-- HERO -->
+
+            <div class="hero">
+
+                <div class="hero-text">
+
+                    <div class="hero-label">
+                        <i class="fa-solid fa-shield-halved"></i>
+                        RISKIQ RISK ENGINE
+                    </div>
+
+                    <h1>
+                        Configure your
+                        <span>risk intelligence.</span>
+                    </h1>
+
+                    <p>
+                        Define how RISKIQ evaluates borrowers.
+                        Your rules determine how repayment behaviour,
+                        debt, affordability and income stability
+                        influence the final risk score.
+                    </p>
+
+                </div>
+
+
+                <div class="hero-score">
+
+                    <div class="score-ring">
+
+                        <div>
+                            <strong>82</strong>
+                            <small>/100</small>
+                        </div>
+
+                    </div>
+
+                    <span>Example Risk Score</span>
+
+                </div>
+
+            </div>
+
+
+            <!-- MAIN GRID -->
+
+            <div class="rules-layout">
+
+
+                <!-- RULES -->
+
+                <div class="rules-card">
+
+                    <div class="card-header">
+
+                        <div>
+                            <span class="section-label">
+                                RISK MODEL
+                            </span>
+
+                            <h2>Risk Factor Weights</h2>
+
+                            <p>
+                                Control how much each factor contributes
+                                to the final score.
+                            </p>
+                        </div>
+
+                        <div class="weight-total">
+
+                            <strong id="totalWeight">
+                                100%
+                            </strong>
+
+                            <small>
+                                Total Weight
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- REPAYMENT -->
+
+                    <div class="rule">
+
+                        <div class="rule-icon repayment">
+                            <i class="fa-solid fa-clock-rotate-left"></i>
+                        </div>
+
+                        <div class="rule-info">
+
+                            <strong>
+                                Repayment Behaviour
+                            </strong>
+
+                            <span>
+                                Previous repayment consistency
+                                and payment discipline.
+                            </span>
+
+                            <div class="progress">
+                                <i id="repaymentBar"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="rule-input">
+
+                            <input
+                                id="repaymentWeight"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value="30"
+                            >
+
+                            <span>%</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PREVIOUS LOANS -->
+
+                    <div class="rule">
+
+                        <div class="rule-icon history">
+                            <i class="fa-solid fa-file-invoice-dollar"></i>
+                        </div>
+
+                        <div class="rule-info">
+
+                            <strong>
+                                Previous Loan History
+                            </strong>
+
+                            <span>
+                                Past borrowing performance,
+                                defaults and late payments.
+                            </span>
+
+                            <div class="progress">
+                                <i id="previousLoanBar"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="rule-input">
+
+                            <input
+                                id="previousLoanWeight"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value="20"
+                            >
+
+                            <span>%</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DEBT -->
+
+                    <div class="rule">
+
+                        <div class="rule-icon debt">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+
+                        <div class="rule-info">
+
+                            <strong>
+                                Debt Behaviour
+                            </strong>
+
+                            <span>
+                                Existing debt obligations and
+                                debt-to-income pressure.
+                            </span>
+
+                            <div class="progress">
+                                <i id="debtBar"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="rule-input">
+
+                            <input
+                                id="debtWeight"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value="25"
+                            >
+
+                            <span>%</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- AFFORDABILITY -->
+
+                    <div class="rule">
+
+                        <div class="rule-icon affordability">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+
+                        <div class="rule-info">
+
+                            <strong>
+                                Affordability
+                            </strong>
+
+                            <span>
+                                Whether income can comfortably
+                                support the requested loan.
+                            </span>
+
+                            <div class="progress">
+                                <i id="affordabilityBar"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="rule-input">
+
+                            <input
+                                id="affordabilityWeight"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value="15"
+                            >
+
+                            <span>%</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- INCOME -->
+
+                    <div class="rule">
+
+                        <div class="rule-icon income">
+                            <i class="fa-solid fa-chart-line"></i>
+                        </div>
+
+                        <div class="rule-info">
+
+                            <strong>
+                                Income Stability
+                            </strong>
+
+                            <span>
+                                Consistency and reliability
+                                of the borrower's income.
+                            </span>
+
+                            <div class="progress">
+                                <i id="incomeBar"></i>
+                            </div>
+
+                        </div>
+
+                        <div class="rule-input">
+
+                            <input
+                                id="incomeStabilityWeight"
+                                type="number"
+                                min="0"
+                                max="100"
+                                value="10"
+                            >
+
+                            <span>%</span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="weightMessage"
+                        class="weight-message">
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT COLUMN -->
+
+                <div class="right-column">
+
+
+                    <!-- DECISION RULES -->
+
+                    <div class="settings-card">
+
+                        <div class="card-header small">
+
+                            <div>
+
+                                <span class="section-label">
+                                    DECISION CONTROL
+                                </span>
+
+                                <h2>Approval Parameters</h2>
+
+                            </div>
+
+                            <i class="fa-solid fa-gavel"></i>
+
+                        </div>
+
+
+                        <div class="parameter">
+
+                            <div>
+
+                                <strong>
+                                    Maximum Debt-to-Income
+                                </strong>
+
+                                <span>
+                                    Maximum acceptable DTI ratio.
+                                </span>
+
+                            </div>
+
+                            <div class="parameter-input">
+
+                                <input
+                                    id="maximumDti"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    value="60"
+                                >
+
+                                <span>%</span>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="parameter">
+
+                            <div>
+
+                                <strong>
+                                    Minimum Approval Score
+                                </strong>
+
+                                <span>
+                                    Minimum score required for approval.
+                                </span>
+
+                            </div>
+
+                            <div class="parameter-input">
+
+                                <input
+                                    id="minimumApprovalScore"
+                                    type="number"
+                                    min="0"
+                                    max="100"
+                                    value="75"
+                                >
+
+                                <span>/100</span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SCORE LOGIC -->
+
+                    <div class="logic-card">
+
+                        <div class="logic-icon">
+                            <i class="fa-solid fa-brain"></i>
+                        </div>
+
+                        <div>
+
+                            <span>
+                                RISKIQ DECISION LOGIC
+                            </span>
+
+                            <h3>
+                                Transparent risk scoring
+                            </h3>
+
+                            <p>
+                                Every borrower receives a score
+                                out of 100 based on the factors
+                                configured by your organization.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- RISK LEVELS -->
+
+                    <div class="risk-levels">
+
+                        <div class="risk-level low">
+
+                            <div>
+                                <span class="dot"></span>
+                                <strong>LOW RISK</strong>
+                            </div>
+
+                            <b>75–100</b>
+
+                        </div>
+
+
+                        <div class="risk-level medium">
+
+                            <div>
+                                <span class="dot"></span>
+                                <strong>MEDIUM RISK</strong>
+                            </div>
+
+                            <b>50–74</b>
+
+                        </div>
+
+
+                        <div class="risk-level high">
+
+                            <div>
+                                <span class="dot"></span>
+                                <strong>HIGH RISK</strong>
+                            </div>
+
+                            <b>0–49</b>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- SAVE BAR -->
+
+            <div class="save-bar">
+
+                <div>
+
+                    <i class="fa-solid fa-circle-info"></i>
+
+                    <span id="saveMessage">
+                        Changes will affect new risk assessments.
+                    </span>
+
+                </div>
+
+                <div class="save-actions">
+
+                    <button
+                        id="resetButton"
+                        class="reset-button">
+                        Reset
+                    </button>
+
+                    <button
+                        id="saveButton"
+                        class="save-button">
+
+                        <i class="fa-solid fa-check"></i>
+
+                        Save Risk Rules
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+function toggleSidebar() {
+
+    document
+        .querySelector(".sidebar")
+        .classList.toggle("collapsed");
+
+    document
+        .querySelector(".main")
+        .classList.toggle("collapsed");
+
+}
+</script>
+
+<script type="module" src="risk-rules.js"></script>
+
+</body>
+
+</html>
